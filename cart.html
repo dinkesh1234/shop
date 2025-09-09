@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <style>
+    body {font-family: Arial, sans-serif; margin:0; background:#f4f4f4;}
+    .navbar {background:#232f3e; color:white; padding:12px 20px;}
+    table {width:80%; margin:20px auto; border-collapse: collapse; background:white; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    th, td {padding:12px; border:1px solid #ddd; text-align:center;}
+    th {background:#232f3e; color:white;}
+    img {width:60px; height:60px; object-fit:contain; border-radius:8px;}
+    .btn {background:#ff9900; border:none; padding:6px 10px; cursor:pointer; border-radius:5px;}
+    .btn:hover {background:#e68a00;}
+    .total {text-align:right; margin:20px; font-size:18px; font-weight:bold;}
+    .empty {text-align:center; margin:40px; font-size:20px;}
+  </style>
+</head>
+<body>
+  <div class="navbar">🛒 Your Shopping Cart</div>
+  <div id="cartContainer"></div>
+  <div class="total" id="totalPrice"></div>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      if(cart.length === 0) {
+        document.getElementById("cartContainer").innerHTML = "<p class='empty'>Your cart is empty!</p>";
+        document.getElementById("totalPrice").innerText = "";
+        return;
+      }
+
+      let table = `<table>
+        <tr><th>Image</th><th>Product</th><th>Price</th><th>Quantity</th><th>Remove</th></tr>`;
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        table += `<tr>
+          <td><img src="${item.img}" alt=""></td>
+          <td>${item.name}</td>
+          <td>$${item.price}</td>
+          <td>
+            <button class="btn" onclick="changeQty(${index}, -1)">-</button>
+            ${item.qty}
+            <button class="btn" onclick="changeQty(${index}, 1)">+</button>
+          </td>
+          <td><button class="btn" onclick="removeItem(${index})">X</button></td>
+        </tr>`;
+      });
+
+      table += "</table>";
+      document.getElementById("cartContainer").innerHTML = table;
+      document.getElementById("totalPrice").innerText = "Total: $" + total;
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if(cart[index].qty <= 0) cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

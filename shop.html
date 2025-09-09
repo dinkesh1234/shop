@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuick Taling Mobile Shop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">📱 Kuick Taling Mobile</div>
+    <input type="text" id="searchBar" placeholder="Search products...">
+    <a href="cart.html">🛒 Cart (<span id="cartCount">0</span>)</a>
+  </nav>
+
+  <!-- Products -->
+  <div class="container" id="productList">
+    <div class="card">
+      <img src="code/speaker2 (2).jpeg" alt="Speaker">
+      <h3>Bluetooth Speaker 1</h3>
+      <p class="price" data-price="10">$10</p>
+      <button class="addToCart">Add to Cart</button>
+    </div>
+    <div class="card">
+      <img src="code/speaker2 (3).jpeg" alt="Headphones">
+      <h3>Bluetooth Speaker 2</h3>
+      <p class="price" data-price="20">$20</p>
+      <button class="addToCart">Add to Cart</button>
+    </div>
+    <div class="card">
+      <img src="code/WhatsApp Image 2025-08-26 at 8.34.22 PM.jpeg" alt="Phone Cover">
+      <h3>Mobile Cover</h3>
+      <p class="price" data-price="5">$5</p>
+      <button class="addToCart">Add to Cart</button>
+    </div>
+    <div class="card">
+      <img src="code/speaker.jpeg" alt="Charger">
+      <h3>Bluetooth Speaker 3</h3>
+      <p class="price" data-price="15">$15</p>
+      <button class="addToCart">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Kuick Taling Mobile Shop</p>
+    <p>📧 <a href="mailto:khandelwaldinkesh4@gmail.com" style="color:rgb(196, 175, 175);">khandelwaldinkesh4@gmail.com</a>
+       📞 <a href="tel:+91 9284347011" style="color:rgb(196, 175, 175);">+91 928-434-7011 </a></p>
+  </footer>
+
+ <script>
+  // Initialize cart from localStorage
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  updateCartCount();
+
+  // Add to Cart functionality
+  document.querySelectorAll(".addToCart").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".card"); // safer than parentElement
+      if (!card) return;
+
+      const priceAttr = card.querySelector(".price")?.dataset.price;
+      const product = {
+        name: card.querySelector("h3")?.innerText || "Unnamed Product",
+        price: priceAttr ? parseFloat(priceAttr) : 0, // safe parsing
+        img: card.querySelector("img")?.src || "",
+        qty: 1
+      };
+
+      const existing = cart.find(item => item.name === product.name);
+      if (existing) existing.qty++;
+      else cart.push(product);
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+
+      // Temporary alert - can replace with better UI notification
+      alert(product.name + " added to cart!");
+    });
+  });
+
+  // Update cart count display
+  function updateCartCount() {
+    const count = cart.reduce((total, item) => total + item.qty, 0);
+    const cartEl = document.getElementById("cartCount");
+    if (cartEl) cartEl.innerText = count;
+  }
+
+  // Search functionality
+  const searchBar = document.getElementById("searchBar");
+  if (searchBar) {
+    searchBar.addEventListener("keyup", function () {
+      const query = this.value.toLowerCase();
+      document.querySelectorAll(".card").forEach(card => {
+        const productName = card.querySelector("h3")?.innerText.toLowerCase() || "";
+        card.style.display = productName.includes(query) ? "" : "none"; // preserves original display
+      });
+    });
+  }
+</script>
+</body>
+</html>
